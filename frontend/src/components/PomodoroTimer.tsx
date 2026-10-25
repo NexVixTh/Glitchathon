@@ -87,9 +87,13 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   const [mode, setMode] = useState<Mode>('focus');
   const [remainingMs, setRemainingMs] = useState<number>(DURATION_MS.focus);
   const [isRunning, setIsRunning] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [muted, setMuted] = useState(false);
   const [sessions, setSessions] = useState(0);
+
+  useEffect(() => {
+    if (isOpen) setExpanded(true);
+  }, [isOpen, startKey]);
 
   // Timestamp-based clock: stays accurate when the tab is backgrounded and throttled.
   const endAtRef = useRef<number | null>(null);

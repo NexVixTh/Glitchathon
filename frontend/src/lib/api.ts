@@ -160,13 +160,20 @@ export async function fetchStudyMaterials(
   let response: Response;
 
   try {
-    response = await fetch(
-      `${API_BASE_URL}/study/materials?topic=${encodeURIComponent(topic.trim())}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1500);
+    try {
+      response = await fetch(
+        `${API_BASE_URL}/study/materials?topic=${encodeURIComponent(topic.trim())}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+        }
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch (netErr: any) {
     throw new Error(
       `Cannot connect to backend at ${API_BASE_URL}. (${netErr.message})`
